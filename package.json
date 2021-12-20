@@ -14,6 +14,7 @@
     "@polymer/iron-overlay-behavior": "3.0.3",
     "@polymer/iron-resizable-behavior": "3.0.1",
     "@polymer/iron-scroll-target-behavior": "3.0.1",
+    "@polymer/paper-slider": "3.0.1",
     "@polymer/polymer": "3.2.0",
     "@vaadin/vaadin-accordion": "1.2.0",
     "@vaadin/vaadin-app-layout": "2.2.0",
@@ -66,8 +67,10 @@
     "@webcomponents/shadycss": "1.8.0",
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "construct-style-sheets-polyfill": "3.0.4",
+    "line-awesome": "1.3.0",
     "lit-element": "2.5.1",
-    "lit-html": "1.4.1"
+    "lit-html": "1.4.1",
+    "lumo-css-framework": "^4.0.10"
   },
   "devDependencies": {
     "babel-loader": "8.2.2",
@@ -103,6 +106,7 @@
       "@polymer/iron-overlay-behavior": "3.0.3",
       "@polymer/iron-resizable-behavior": "3.0.1",
       "@polymer/iron-scroll-target-behavior": "3.0.1",
+      "@polymer/paper-slider": "3.0.1",
       "@polymer/polymer": "3.2.0",
       "@vaadin/vaadin-accordion": "1.2.0",
       "@vaadin/vaadin-app-layout": "2.2.0",
@@ -155,8 +159,10 @@
       "@webcomponents/shadycss": "1.8.0",
       "@webcomponents/webcomponentsjs": "^2.2.10",
       "construct-style-sheets-polyfill": "3.0.4",
+      "line-awesome": "1.3.0",
       "lit-element": "2.5.1",
-      "lit-html": "1.4.1"
+      "lit-html": "1.4.1",
+      "lumo-css-framework": "^4.0.10"
     },
     "devDependencies": {
       "babel-loader": "8.2.2",
@@ -178,6 +184,6 @@
       "webpack-dev-server": "3.11.0",
       "webpack-merge": "4.2.2"
     },
-    "hash": "93fb0ae1686c82cd0dd364da7c522a93cf21c4e7bdcea6e683ecea12435c2e8c"
+    "hash": "77012cbc5f9b2c014421e7e5424ddcb22a96d2cf4e3d86a93bb641f7ef64f508"
   }
 }
