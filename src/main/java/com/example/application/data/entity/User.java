@@ -1,14 +1,19 @@
 package com.example.application.data.entity;
 
 import com.example.application.data.AbstractEntity;
+import com.example.application.data.listener.UserListener;
+import com.example.application.data.repository.LevelRepository;
+import com.example.application.data.repository.UserSettingsRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
+@EntityListeners(UserListener.class)
 @Entity
 @Table(name = "_user", uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
 public class User extends AbstractEntity implements UserDetails {
@@ -20,6 +25,12 @@ public class User extends AbstractEntity implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private UserSettings userSettings;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Rating> ratings;
 
     @Transient
     public String getStringRoles() {
@@ -85,5 +96,13 @@ public class User extends AbstractEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return false;
+    }
+
+    public UserSettings getUserSettings() {
+        return userSettings;
+    }
+
+    public void setUserSettings(UserSettings userSettings) {
+        this.userSettings = userSettings;
     }
 }

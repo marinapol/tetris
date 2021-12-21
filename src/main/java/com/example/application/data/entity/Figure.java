@@ -19,6 +19,8 @@ public class Figure extends AbstractEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Level> levels;
 
+    private Boolean base;
+
     public int[][] getMatrix() {
         try {
             String[] matrixSplit = matrix.split(",");
@@ -54,5 +56,13 @@ public class Figure extends AbstractEntity {
 
     public void setLevels(Set<Level> levels) {
         this.levels = levels;
+    }
+
+    public Boolean getBase() {
+        return base;
+    }
+
+    public void setBase(Boolean base) {
+        this.base = base;
     }
 }

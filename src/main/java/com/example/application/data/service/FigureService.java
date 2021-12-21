@@ -20,6 +20,8 @@ public class FigureService {
         return figureRepository.findByOrderByIdAsc();
     }
 
+    public List<Figure> getBasicFigures(Boolean isBase) {return figureRepository.findAllByBaseEquals(isBase);}
+
     public Figure getById(Integer figureId) {
         return figureRepository.findById(figureId).orElse(null);
     }
@@ -29,6 +31,7 @@ public class FigureService {
     }
 
     public boolean save(Figure figure) {
+        figure.setBase(false);
         figureRepository.save(figure);
         return true;
     }

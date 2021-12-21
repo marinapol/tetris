@@ -70,6 +70,10 @@ public class Game {
         return isGameOver;
     }
 
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
+    }
+
     public int getHeight() {
         return height;
     }

@@ -17,6 +17,14 @@ public class RatingService {
         return ratingRepository.findAll();
     }
 
+    public List<Rating> getTop10RatingsByScore() {
+        return ratingRepository.getTop10RatingsByScore();
+    }
+
+    public List<Rating> getTop10RatingsByTime() {
+        return ratingRepository.getTop10RatingsByTime();
+    }
+
     public void save(Rating rating) {
         ratingRepository.save(rating);
     }

@@ -25,10 +25,13 @@ public class RatingView extends VerticalLayout {
 
         initRadioButtonGroup();
         initRatingGrid();
-        add(ratingTypeRadioButtonGroup, ratingGrid);
-        setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+        VerticalLayout gridLayout = new VerticalLayout();
+        gridLayout.setWidth("AUTO");
+        gridLayout.setHeight("100%");
+        gridLayout.add(ratingGrid);
+        add(ratingTypeRadioButtonGroup, gridLayout);
         setAlignItems(Alignment.CENTER);
-        setHorizontalComponentAlignment(Alignment.CENTER);
+        ratingGrid.setWidth("600px");
         ratingTypeRadioButtonGroup.setValue(RatingType.BY_SCORE);
 
     }
@@ -46,7 +49,6 @@ public class RatingView extends VerticalLayout {
         ratingGrid.addColumn(new TextRenderer<>(rating -> rating.getUser().getUsername())).setHeader("Пользователь");
         ratingGrid.addColumn("score").setHeader("Очки");
         ratingGrid.addColumn("time").setHeader("Время");
-        ratingGrid.setItems(ratingService.getAllRatings());
 
     }
 
@@ -55,10 +57,12 @@ public class RatingView extends VerticalLayout {
             if (event.getValue().equals(RatingType.BY_SCORE)) {
                 ratingGrid.getColumnByKey("time").setVisible(false);
                 ratingGrid.getColumnByKey("score").setVisible(true);
+                ratingGrid.setItems(ratingService.getTop10RatingsByScore());
             }
             else {
                 ratingGrid.getColumnByKey("score").setVisible(false);
                 ratingGrid.getColumnByKey("time").setVisible(true);
+                ratingGrid.setItems(ratingService.getTop10RatingsByTime());
             }
         });
     }

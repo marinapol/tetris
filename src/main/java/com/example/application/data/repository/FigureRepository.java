@@ -14,4 +14,6 @@ public interface FigureRepository extends JpaRepository<Figure, Integer> {
 
     @Query("select f from Figure f left join f.levels lvls where :level in lvls")
     List<Figure> findByLevel(@Param("level") Level level);
+
+    List<Figure> findAllByBaseEquals(Boolean isBase);
 }

@@ -38,7 +38,7 @@ public class UserForm extends FormLayout {
     Button changePasswordBtn = new Button("Сменить пароль");
     PasswordField password = new PasswordField("Пароль");
     Label rolesLabel = new Label("Роли");
-    MultiSelectListBox<Role> roles = new MultiSelectListBox<>();
+    //MultiSelectListBox<Role> roles = new MultiSelectListBox<>();
 
     Button save = new Button("Сохранить");
     Button delete = new Button("Удалить");
@@ -50,7 +50,7 @@ public class UserForm extends FormLayout {
         this.roleService = roleService;
         addClassName("user-form");
         binder.forField(username).bind("username");
-        binder.forField(roles).bind("roles");
+        //binder.forField(roles).bind("roles");
 
         changePasswordBtn.addClickListener(buttonClickEvent -> {
             changePasswordBtn.setVisible(false);
@@ -60,9 +60,9 @@ public class UserForm extends FormLayout {
                     .bind("password");
 
         });
-        roles.setItems(roleService.getRoles());
-        roles.setRenderer(new TextRenderer<>(Role::getName));
-        add(username, changePasswordBtn, password, rolesLabel, roles, createButtonsLayout());
+        //roles.setItems(roleService.getRoles());
+        //roles.setRenderer(new TextRenderer<>(Role::getName));
+        add(username, changePasswordBtn, password, /*rolesLabel, roles*/ createButtonsLayout());
     }
 
     public void setUser(User user, boolean isNew) {
@@ -91,11 +91,12 @@ public class UserForm extends FormLayout {
         close.addClickShortcut(Key.ESCAPE);
 
         save.addClickListener(event -> {
-            if (roles.isEmpty()) {
+            validateAndSave();
+           /* if (roles.isEmpty()) {
                 Notifier.showWarningNotification("Выберите роли пользователя");
             } else {
                 validateAndSave();
-            }
+            }*/
         });
         delete.addClickListener(event -> fireEvent(new DeleteEvent(this, user)));
         close.addClickListener(event -> fireEvent(new CloseEvent(this)));

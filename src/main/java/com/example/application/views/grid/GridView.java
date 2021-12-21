@@ -1,6 +1,7 @@
 package com.example.application.views.grid;
 
 import com.example.application.data.service.GridService;
+import com.example.application.data.service.LevelService;
 import com.example.application.data.utils.Constants;
 import com.example.application.data.utils.Notifier;
 import com.example.application.views.MainLayout;
@@ -17,14 +18,16 @@ import javax.annotation.security.RolesAllowed;
 public class GridView extends VerticalLayout {
 
     GridService gridService;
+    LevelService levelService;
 
     Grid<com.example.application.data.entity.Grid> grid = new Grid<>(com.example.application.data.entity.Grid.class);
     Button createGridButton = new Button("Создать");
 
     GridForm gridForm;
 
-    public GridView(GridService gridService) {
+    public GridView(GridService gridService, LevelService levelService) {
         this.gridService = gridService;
+        this.levelService = levelService;
 
         addClassName("grid-view");
         setSizeFull();
@@ -81,7 +84,12 @@ public class GridView extends VerticalLayout {
     }
 
     private void deleteGrid(GridForm.DeleteEvent event) {
-        gridService.deleteGrid(event.getGrid().getId());
+        if (!gridService.deleteGrid(event.getGrid().getId())) {
+            if (levelService.existsLevelByGrid(event.getGrid())) {
+                Notifier.showWarningNotification("Удаление невозможно, т.к. сущетсвует зависимый уровень сложности");
+                return;
+            }
+        }
         updateGrids();
         closeEditor();
         Notifier.showSuccessNotification(Constants.GRID_DELETE_SUCCESS);

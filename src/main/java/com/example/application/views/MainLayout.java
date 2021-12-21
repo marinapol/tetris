@@ -12,6 +12,7 @@ import com.example.application.views.user.UserView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.page.Push;
@@ -39,7 +40,8 @@ public class MainLayout extends AppLayout {
         Button logoutButton = new Button("Выйти", buttonClickEvent -> securityService.logout());
         Tabs menuTabs = getMenuTabs();
 
-        HorizontalLayout header = new HorizontalLayout(logo, menuTabs, logoutButton);
+        Label currentUserLabel = new Label(String.format("[%s]", SecurityUtils.getUser().getUsername()));
+        HorizontalLayout header = new HorizontalLayout(logo, menuTabs, currentUserLabel, logoutButton);
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.setWidth("100%");

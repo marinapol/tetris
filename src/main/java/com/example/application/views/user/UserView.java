@@ -1,8 +1,11 @@
 package com.example.application.views.user;
 
 import com.example.application.data.entity.User;
+import com.example.application.data.entity.UserSettings;
+import com.example.application.data.repository.LevelRepository;
 import com.example.application.data.service.RoleService;
 import com.example.application.data.service.UserService;
+import com.example.application.data.service.UserSettingsService;
 import com.example.application.data.utils.Constants;
 import com.example.application.data.utils.Notifier;
 import com.example.application.views.MainLayout;
@@ -18,15 +21,19 @@ public class UserView extends VerticalLayout {
 
     UserService userService;
     RoleService roleService;
+    UserSettingsService userSettingsService;
+    LevelRepository levelRepository;
 
     Grid<User> userGrid = new Grid<>(User.class);
     Button createUserButton = new Button("Создать");
 
     UserForm userForm;
 
-    public UserView(UserService userService, RoleService roleService) {
+    public UserView(UserService userService, RoleService roleService, UserSettingsService userSettingsService, LevelRepository levelRepository) {
         this.userService = userService;
         this.roleService = roleService;
+        this.userSettingsService = userSettingsService;
+        this.levelRepository = levelRepository;
 
         addClassName("user-view");
         setSizeFull();
@@ -50,8 +57,7 @@ public class UserView extends VerticalLayout {
     private void initGrid() {
         userGrid.addClassNames("user-grid");
         userGrid.setSizeFull();
-        userGrid.setColumns("username", "password", "stringRoles");
-        //userGrid.addColumn(user -> user.getRoles().stream().findAny().get().getName()).setHeader("Роль");
+        userGrid.setColumns("username", "password");
         userGrid.getColumnByKey("username").setHeader("Логин");
         userGrid.getColumnByKey("password").setHeader("Пароль");
 
@@ -66,7 +72,7 @@ public class UserView extends VerticalLayout {
     }
 
     private void updateUsers() {
-        userGrid.setItems(userService.getAllUsers());
+        userGrid.setItems(userService.getAllPlayers());
     }
 
     private void initUserForm() {
@@ -85,6 +91,7 @@ public class UserView extends VerticalLayout {
             Notifier.showSuccessNotification(Constants.USER_SAVE_SUCCESS);
         }
         else {
+
             if (userService.saveUser(event.getUser())) {
                 updateUsers();
                 closeEditor();

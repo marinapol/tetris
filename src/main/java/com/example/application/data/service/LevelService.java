@@ -25,4 +25,8 @@ public class LevelService {
     public void saveLevel(Level level) {
         levelRepository.save(level);
     }
+
+    public boolean existsLevelByGrid(Grid grid) {
+        return levelRepository.existsLevelByGrid(grid);
+    }
 }

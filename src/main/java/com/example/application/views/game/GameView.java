@@ -1,5 +1,6 @@
 package com.example.application.views.game;
 
+import com.example.application.ExtCanvas;
 import com.example.application.data.entity.Rating;
 import com.example.application.data.entity.RatingType;
 import com.example.application.data.entity.User;
@@ -14,8 +15,11 @@ import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.DetachEvent;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -31,11 +35,14 @@ public class GameView extends VerticalLayout {
     FigureService figureService;
     RatingService ratingService;
 
+    VerticalLayout gameFieldAndControlsLayout;
     VerticalLayout gameFieldLayout;
     VerticalLayout gridLayout = new VerticalLayout();
 
     VerticalLayout nextFigureLayout;
     VerticalLayout nextFigure = new VerticalLayout();
+
+    HorizontalLayout controlButtonsLayout = new HorizontalLayout();
 
     UserSettings userSettings;
     User user;
@@ -48,15 +55,14 @@ public class GameView extends VerticalLayout {
     Game currentGame;
 
     Button startGame;
-    Button step;
+    Button down;
     Button left;
     Button right;
     Button rotate;
     Label score;
     Label time;
-    Button pause;
+    Button stop;
 
-    boolean isPaused;
 
     @Override
     protected void onDetach(DetachEvent detachEvent) {
@@ -78,28 +84,24 @@ public class GameView extends VerticalLayout {
         startGame = new Button("Начать игру");
         startGame.addClickListener(buttonClickEvent -> initNewGame());
 
-        step = new Button("Вниз");
-        step.addClickListener(buttonClickEvent -> down());
-        step.addClickShortcut(Key.ARROW_DOWN);
-        left = new Button("Влево");
+        down = new Button(new Icon(VaadinIcon.ARROW_DOWN));
+        down.addClickListener(buttonClickEvent -> down());
+        down.addClickShortcut(Key.ARROW_DOWN);
+        left = new Button(new Icon(VaadinIcon.ARROW_LEFT));
         left.addClickListener(buttonClickEvent -> left());
         left.addClickShortcut(Key.ARROW_LEFT);
-        right = new Button("Вправо");
+        right = new Button(new Icon(VaadinIcon.ARROW_RIGHT));
         right.addClickListener(buttonClickEvent -> right());
         right.addClickShortcut(Key.ARROW_RIGHT);
-        rotate = new Button("Вращайте барабан");
+        rotate = new Button(new Icon(VaadinIcon.ROTATE_RIGHT));
         rotate.addClickListener(buttonClickEvent -> rotate());
         rotate.addClickShortcut(Key.SPACE);
 
-        pause = new Button("Пауза");
-        pause.addClickListener(buttonClickEvent -> {
-            if (pause.getText().equals("Пауза")) {
-                pause.setText("Продолжить");
-                isPaused = true;
-            }
-            else {
-                pause.setText("Пауза");
-                isPaused = false;
+        stop = new Button(new Icon(VaadinIcon.STOP));
+        stop.setEnabled(false);
+        stop.addClickListener(buttonClickEvent -> {
+            if (currentGame != null) {
+                currentGame.setGameOver(true);
             }
         });
 
@@ -111,22 +113,29 @@ public class GameView extends VerticalLayout {
             userSettings = userSettingsService.getByUserId(user.getId());
         }
         HorizontalLayout mainLayout = new HorizontalLayout();
-        VerticalLayout buttonsAndScoreLayout = new VerticalLayout(startGame, pause, step, left, right, rotate, score, time);
-        gameFieldLayout = new VerticalLayout(gridLayout);
-        gameFieldLayout.setHeight("700px");
-        nextFigureLayout = new VerticalLayout(new Label("Следующая фигура"), nextFigure);
+        VerticalLayout buttonsAndScoreLayout = new VerticalLayout(new HorizontalLayout(startGame, stop), score, time);
+        controlButtonsLayout.add(left, right, down, rotate);
+
+        gameFieldLayout = new VerticalLayout(getEmptyGameField());
+        gameFieldAndControlsLayout = new VerticalLayout(gameFieldLayout, controlButtonsLayout);
+        gameFieldAndControlsLayout.setAlignItems(Alignment.CENTER);
+        gameFieldAndControlsLayout.setHeight("700px");
+        Label nextFigureLabel = new Label("Следующая фигура");
+        nextFigureLabel.setWidth("250px");
+        nextFigureLayout = new VerticalLayout(nextFigureLabel, nextFigure);
         nextFigureLayout.setVisible(userSettings.isNextFigureVisible());
-        mainLayout.add(buttonsAndScoreLayout, gameFieldLayout, nextFigureLayout);
+        mainLayout.add(buttonsAndScoreLayout, gameFieldAndControlsLayout, nextFigureLayout);
         add(mainLayout);
+        setAlignItems(Alignment.CENTER);
     }
 
     private void initNewGame() {
         currentGame = new Game(userSettings, figureService.getByLevel(userSettings.getLevel()));
         cellSize = 680 / currentGame.getHeight();
-        isPaused = false;
         startGame.setEnabled(false);
+        stop.setEnabled(true);
 
-        gameFieldLayout.remove(gridLayout);
+        gameFieldLayout.removeAll();
         nextFigureLayout.remove(nextFigure);
         gridLayout = currentGame.getGameField(cellSize);
         nextFigure = currentGame.getNextFigure(40);
@@ -178,6 +187,38 @@ public class GameView extends VerticalLayout {
         nextFigureLayout.add(nextFigure);
     }
 
+    private VerticalLayout getEmptyGameField() {
+        int width = userSettings.getLevel().getGrid().getWidth();
+        int height = userSettings.getLevel().getGrid().getHeight();
+        int cellSize = 680 / height;
+
+        VerticalLayout figureRowsLayout = new VerticalLayout();
+        figureRowsLayout.setWidth("AUTO");
+        figureRowsLayout.setSpacing(false);
+
+        if (userSettings.isGridVisible()) {
+            for (int i = 0; i < height; i++) {
+                HorizontalLayout figureRowLayout = new HorizontalLayout();
+                figureRowLayout.setSpacing(false);
+                for (int j = 0; j < width; j++) {
+                    ExtCanvas cell = new ExtCanvas(cellSize, cellSize);
+                    cell.getContext().setStrokeStyle("black");
+                    cell.getContext().rect(0, 0, cellSize, cellSize);
+                    cell.getContext().stroke();
+                    figureRowLayout.add(cell);
+                }
+                figureRowsLayout.add(figureRowLayout);
+            }
+        }
+        if (!userSettings.isGridVisible()) {
+            figureRowsLayout.setWidth(width*cellSize, Unit.PIXELS);
+            figureRowsLayout.setHeight(height*cellSize, Unit.PIXELS);
+            figureRowsLayout.getStyle().set( "border" , "1px solid black");
+            figureRowsLayout.setPadding(false);
+        }
+        return figureRowsLayout;
+    }
+
     private static class StepTread extends  Thread {
         private final UI ui;
         private final GameView view;
@@ -192,7 +233,6 @@ public class GameView extends VerticalLayout {
             int stepTime = 2300 - 200 * view.userSettings.getLevel().getSpeed();
             while (!interrupted()) {
                 try {
-                    while (view.isPaused) {};
                     Thread.sleep(stepTime);
                     ui.access(() -> {
                         view.currentGame.step();
@@ -213,8 +253,9 @@ public class GameView extends VerticalLayout {
                 }
             }
             ui.access(() -> {
-                Notifier.showWarningNotification("Проебал");
+                Notifier.showWarningNotification("Игра окончена");
                 view.startGame.setEnabled(true);
+                view.stop.setEnabled(false);
             });
             Thread.currentThread().interrupt();
         }
@@ -233,7 +274,6 @@ public class GameView extends VerticalLayout {
         public void run() {
             while (!interrupted()) {
                 try {
-                    while (view.isPaused) {};
                     Thread.sleep(1000);
                     ui.access(() -> {
                         view.currentGame.setTime(view.currentGame.getTime() + 1000);
